@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <title>{{ devices | length }} vacs found</title>
+
+        <style>
+            .bordered {
+                display: inline-block;
+
+                border-radius: 10px;
+                border-style: solid;
+                border-width: 1px;
+
+                margin: 10px;
+                padding: 10px;
+            }
+        </style>
+    </head>
+
+<body>
+    <div>
+        <div class="bordered">
+            <div>Control all</div>
+            <form method="post" method="post" action="/vacs/all">
+                <input type="submit" name="command" value="START">
+                <input type="submit" name="command" value="STOP">
+            </form>
+        </div>
+    </div>
+
+    {% for device in devices %}
+    {% set action = 'HOME' if device['state'] == 'cleaning' else 'START' %}
+    <div class="bordered" style="background-color: {{ "#00ff0044" if device['state'] == 'cleaning' else "#ff000044" }};">
+        <div>Identifier: {{ device['identifier'] }}</div>
+        <div>State: {{ device['state'] }}</div>
+        <form method="post" style="float: left;" action="/vacs/{{ device.identifier }}">
+            <input type="hidden" name="endpoint" value="BasicControlCapability/operation">
+            <input type="submit" name="command" value="{{ action }}">
+        </form>
+        <div></div>
+        <form method="post" style="float: left;" action="/vacs/{{ device.identifier }}">
+            <input type="hidden" name="endpoint" value="LocateCapability/locate">
+            <input type="hidden" name="command" value="PERFORM">
+            <input type="submit" value="SPEAK">
+        </form>
+        <img alt="No map available" width="300" src="data:image/png;base64,{{ device['map'] }}">
+    </div>
+    {% endfor %}
+</body>
+
+</html>
