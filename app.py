@@ -48,6 +48,16 @@ def vac_control_single(id: str):
     publish(id, endpoint, command)
     return root()
 
+@app.post('/update')
+def update():
+    global devices
+
+    devices = {}
+
+    targets_update()
+
+    return "targets updated"
+
 
 def connect_client(host, port):
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
