@@ -38,7 +38,8 @@ def get_vacs():
 @app.post('/vacs/all')
 def vac_control_all():
     command = flask.request.form['command']
-    broadcast_command(command)
+    endpoint = flask.request.form['endpoint']
+    broadcast_command(endpoint, command)
     return root()
 
 @app.post('/vacs/<path:id>')
@@ -48,7 +49,7 @@ def vac_control_single(id: str):
     publish(id, endpoint, command)
     return root()
 
-@app.post('/update')
+@app.post('/app/update')
 def update():
     global devices
 
@@ -56,8 +57,7 @@ def update():
 
     targets_update()
 
-    return "targets updated"
-
+    return 'targets updated'
 
 def connect_client(host, port):
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
@@ -123,13 +123,9 @@ def publish(target, endpoint, payload):
         print(f'error publishing to client {target}')
 
 
-def send_command(target, command):
-    publish(target, 'operation', bytes(command, 'utf-8'))
-
-
-def broadcast_command(command):
+def broadcast_command(endpoint, command):
     for target in devices:
-        send_command(target, command)
+        publish(target, endpoint, command)
 
 
 def targets_update(target_host=None):

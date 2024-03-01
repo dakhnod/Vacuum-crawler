@@ -21,6 +21,7 @@
         <div class="bordered">
             <div>Control all</div>
             <form method="post" method="post" action="/vacs/all">
+                <input type="hidden" name="endpoint" value="BasicControlCapability/operation">
                 <input type="submit" name="command" value="START">
                 <input type="submit" name="command" value="STOP">
             </form>
